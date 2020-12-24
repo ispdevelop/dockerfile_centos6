@@ -5,24 +5,32 @@ COPY .bashrc /root/
 COPY .netrc /root/
 COPY .zshrc /root/
 
-RUN yum update -y \
+RUN sed -i "s|#baseurl=|baseurl=|g" /etc/yum.repos.d/CentOS-Base.repo \
+	&& sed -i "s|mirrorlist=|#mirrorlist=|g" /etc/yum.repos.d/CentOS-Base.repo \
+	&& sed -i "s|http://mirror\.centos\.org/centos/\$releasever|https://vault\.centos\.org/6.10|g" /etc/yum.repos.d/CentOS-Base.repo \
+	&& yum update -y \
 	&& yum groupinstall -y 'Development tools' \
 	&& yum install -y curl-devel expat-devel gettext-devel   openssl-devel zlib-devel perl-ExtUtils-MakeMaker wget java-1.8.0-openjdk.x86_64 ant libjpeg-devel zsh valgrind \
 	&& rm -rf /var/cache/yum/* \
 	&& yum clean all \
-	# git環境取得
- 	&& mkdir /root/tmp \
+	&& mkdir /root/tmp \
  	&& cd /root/tmp \
- 	&& wget https://github.com/git/git/archive/v2.20.1.tar.gz \
- 	&& tar -zxvf v2.20.1.tar.gz \
- 	&& cd git-2.20.1 \
+	# maven
+	&& wget https://ftp.jaist.ac.jp/pub/apache/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz \
+	&& tar zxvf apache-maven-3.6.3-bin.tar.gz \
+	&& mv apache-maven-3.6.3 /opt/maven \
+	&& rm -rf apache-maven-3.6.3-bin.tar.gz \
+	# git環境取得
+ 	&& wget https://github.com/git/git/archive/v2.29.2.tar.gz \
+ 	&& tar -zxvf v2.29.2.tar.gz \
+ 	&& cd git-2.29.2 \
  	&& make prefix=/usr/local all \
  	&& make prefix=/usr/local install \
  	&& make clean \
- 	&& cd /root/tmp \
  	# go言語環境取得
- 	&& wget https://redirector.gvt1.com/edgedl/go/go1.12.5.linux-amd64.tar.gz \
- 	&& tar -C /usr/local -xzf go1.12.5.linux-amd64.tar.gz \
+	&& cd /root/tmp \
+	&& wget https://redirector.gvt1.com/edgedl/go/go1.15.6.linux-amd64.tar.gz \
+ 	&& tar -C /usr/local -xzf go1.15.6.linux-amd64.tar.gz \
  	&& cd /root \
  	&& mkdir gohome \
  	&& bash \
