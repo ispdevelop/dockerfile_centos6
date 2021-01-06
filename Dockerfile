@@ -5,6 +5,8 @@ COPY .bashrc /root/
 COPY .netrc /root/
 COPY .zshrc /root/
 
+ENV JAVA_HOME=/usr/lib/jvm/java
+
 RUN sed -i "s|#baseurl=|baseurl=|g" /etc/yum.repos.d/CentOS-Base.repo \
 	&& sed -i "s|mirrorlist=|#mirrorlist=|g" /etc/yum.repos.d/CentOS-Base.repo \
 	&& sed -i "s|http://mirror\.centos\.org/centos/\$releasever|https://vault\.centos\.org/6.10|g" /etc/yum.repos.d/CentOS-Base.repo \
